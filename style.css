@@ -338,14 +338,14 @@ main {
     }
 
     #hint {
-        font-size: 0.6em;
+        font-size: 1em;
     }
 
     #next {
         font-size: 0.6em;
     }
     #skip {
-        font-size: 0.6em;
+        font-size: 1em;
     }
 
     .layout {

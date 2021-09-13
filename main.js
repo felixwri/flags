@@ -10,11 +10,19 @@ let score = { current: 0, best: 0, deductions: 2 };
 setInterval(() => {
     let guess = document.getElementById("guess").value.toLowerCase();
     let answer = current.country.toLowerCase();
-
     // console.log(guessAccuracy(guess, answer))
 
-    if (guessAccuracy(guess, answer) > 0.8 && !timeline.active) {
-        transition(true);
+    if (current.aliases === undefined) {
+        if (guessAccuracy(guess, answer) > 0.8 && !timeline.active) {
+            transition(true);
+        }
+    } else {
+        for (let i = 0; i < current.aliases.length; i++) {
+            answer = current.aliases[i].toLowerCase();
+            if (guessAccuracy(guess, answer) > 0.8 && !timeline.active) {
+                transition(true);
+            }
+        }
     }
 }, 600);
 
@@ -113,10 +121,21 @@ document.getElementById("guess").addEventListener("keypress", function (e) {
         let guess = document.getElementById("guess").value.toLowerCase();
         let answer = current.country.toLowerCase();
 
-        if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
-            correct = true;
+        if (current.aliases === undefined) {
+            if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
+                correct = true;
+            } else {
+                score.deductions += 1;
+            }
         } else {
-            score.deductions += 1;
+            for (let i = 0; i < current.aliases.length; i++) {
+                answer = current.aliases[i].toLowerCase();
+                if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
+                    correct = true;
+                } else {
+                    score.deductions += 1;
+                }
+            }
         }
 
         transition(correct);
@@ -132,12 +151,14 @@ document.getElementById("use-world").onclick = (e) => {
     flagSet = "world";
     document.getElementById("use-world").style.color = "rgb(138, 218, 255)";
     document.getElementById("use-american").style.color = "rgb(255, 255, 255)";
+    skip();
 };
 
 document.getElementById("use-american").onclick = (e) => {
     flagSet = "american";
     document.getElementById("use-world").style.color = "rgb(255, 255, 255)";
     document.getElementById("use-american").style.color = "rgb(138, 218, 255)";
+    skip();
 };
 
 // document.getElementById("next").onclick = async (e) => {
@@ -172,8 +193,13 @@ const transition = async (correct) => {
 
 document.getElementById("skip").onclick = async (e) => {
     if (timeline.active) return;
-    timeline.active = true;
     score.deductions += 4;
+    skip();
+};
+
+const skip = async () => {
+    if (timeline.active) return;
+    timeline.active = true;
     document.getElementById("image").style.opacity = `0`;
     document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 1)`;
     await sleep(500);
@@ -208,20 +234,16 @@ const newFlag = async () => {
     if (flagSet === "world") {
         randomKey = randomCountry();
         address = `https://flagcdn.com/h240/${randomKey}.png`;
-        current = { code: randomKey, country: countries[randomKey].country };
+        current = { code: randomKey, country: countries[randomKey].country, aliases: countries[randomKey].aliases };
     } else if (flagSet === "american") {
         randomKey = americanKeys[Math.round(Math.random() * americanKeys.length)];
-        console.log(randomKey);
         address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries.us.states[randomKey] };
     }
 
     document.getElementById("image").src = address;
-
-    // background: linear-gradient(var(--main-bg), #9198e5);
     col = await get_average_rgb(address);
     document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
-    // document.getElementsByTagName("body")[0].style.background = `linear-gradient(var(--main-bg) 50%, rgb(${col[0]}, ${col[1]}, ${col[2]})`;
 
     document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
 
@@ -256,7 +278,7 @@ async function get_average_rgb(src) {
         img.crossOrigin = "";
 
         img.onload = () => {
-            context.drawImage(img, 0, 0, 1, 1);
+            context.drawImage(img, 0, 0, 2, 2);
             resolve(context.getImageData(0, 0, 1, 1).data.slice(0, 3));
         };
     });
