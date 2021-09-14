@@ -114,33 +114,33 @@ document.getElementById("multi").onclick = (e) => {
     score.deductions += 3;
 };
 
-document.getElementById("guess").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        let correct = false;
+// document.getElementById("guess").addEventListener("keypress", function (e) {
+//     if (e.key === "Enter") {
+//         let correct = false;
 
-        let guess = document.getElementById("guess").value.toLowerCase();
-        let answer = current.country.toLowerCase();
+//         let guess = document.getElementById("guess").value.toLowerCase();
+//         let answer = current.country.toLowerCase();
 
-        if (current.aliases === undefined) {
-            if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
-                correct = true;
-            } else {
-                score.deductions += 1;
-            }
-        } else {
-            for (let i = 0; i < current.aliases.length; i++) {
-                answer = current.aliases[i].toLowerCase();
-                if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
-                    correct = true;
-                } else {
-                    score.deductions += 1;
-                }
-            }
-        }
+//         if (current.aliases === undefined) {
+//             if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
+//                 correct = true;
+//             } else {
+//                 score.deductions += 1;
+//             }
+//         } else {
+//             for (let i = 0; i < current.aliases.length; i++) {
+//                 answer = current.aliases[i].toLowerCase();
+//                 if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
+//                     correct = true;
+//                 } else {
+//                     score.deductions += 1;
+//                 }
+//             }
+//         }
 
-        transition(correct);
-    }
-});
+//         transition(correct);
+//     }
+// });
 
 document.getElementById("difficulty").onchange = (e) => {
     console.log("difficulty changed");
@@ -228,6 +228,8 @@ const newFlag = async () => {
     let hint = document.getElementsByClassName("hint-letter");
     if (hint.length) hint[0].remove();
 
+    timeline.active = false;
+
     let address = `https://flagcdn.com/h240/us.png`;
     let randomKey = "us";
 
@@ -249,7 +251,6 @@ const newFlag = async () => {
 
     // document.getElementById("score").innerText = parseInt(document.getElementById("score").innerText) + 2 - score.deductions;
 
-    timeline.active = false;
     score.deductions = 0;
 };
 
