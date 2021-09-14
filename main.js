@@ -202,7 +202,9 @@ const skip = async () => {
     timeline.active = true;
     document.getElementById("image").style.opacity = `0`;
     document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 1)`;
+
     await sleep(500);
+
     newFlag();
     document.getElementById("image").style.opacity = `1`;
 };
@@ -228,8 +230,6 @@ const newFlag = async () => {
     let hint = document.getElementsByClassName("hint-letter");
     if (hint.length) hint[0].remove();
 
-    timeline.active = false;
-
     let address = `https://flagcdn.com/h240/us.png`;
     let randomKey = "us";
 
@@ -237,23 +237,30 @@ const newFlag = async () => {
         randomKey = randomCountry();
         address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries[randomKey].country, aliases: countries[randomKey].aliases };
+
+        document.getElementById("image").src = address;
+        col = await get_average_rgb(address);
+        document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
+        document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
     } else if (flagSet === "american") {
         randomKey = americanKeys[Math.round(Math.random() * americanKeys.length)];
 
-        randomKey = randomKey.replace("us-", "");
-        address = `https://github.com/felixwri/flags/blob/main/images/${randomKey}.png?raw=true`;
+        const formattedRandomKey = randomKey.replace("us-", "");
+        address = `https://raw.githubusercontent.com/felixwri/flags/main/images/${formattedRandomKey}.png`;
+        // address = `https://github.com/felixwri/flags/blob/main/images/${randomKey}.png?raw=true`;
         // address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries.us.states[randomKey] };
+
+        document.getElementById("image").src = address;
+        col = await get_average_rgb(address);
+        document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
+        // await sleep(500);
+        document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
     }
-
-    document.getElementById("image").src = address;
-    col = await get_average_rgb(address);
-    document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
-
-    document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
 
     // document.getElementById("score").innerText = parseInt(document.getElementById("score").innerText) + 2 - score.deductions;
 
+    timeline.active = false;
     score.deductions = 0;
 };
 

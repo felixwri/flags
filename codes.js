@@ -68,7 +68,7 @@ const countries = {
     er: { country: "Eritrea", difficulty: 6 },
     es: { country: "Spain", difficulty: 2 },
     et: { country: "Ethiopia", difficulty: 5 },
-    eu: { country: "European Union", difficulty: 1 },
+    // eu: { country: "European Union", difficulty: 1 },
     fi: { country: "Finland", difficulty: 5 },
     fj: { country: "Fiji", difficulty: 7 },
     fk: { country: "Falkland Islands", difficulty: 9 },
@@ -252,7 +252,7 @@ const countries = {
     ua: { country: "Ukraine", difficulty: 5 },
     ug: { country: "Uganda", difficulty: 6 },
     // um: { country: "United States Minor Outlying Islands", difficulty: 10, aliases: ["United States"] },
-    un: { country: "United Nations", difficulty: 2 },
+    // un: { country: "United Nations", difficulty: 2 },
     us: {
         country: "United States",
         difficulty: 1,
