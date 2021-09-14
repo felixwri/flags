@@ -239,7 +239,9 @@ const newFlag = async () => {
         current = { code: randomKey, country: countries[randomKey].country, aliases: countries[randomKey].aliases };
     } else if (flagSet === "american") {
         randomKey = americanKeys[Math.round(Math.random() * americanKeys.length)];
-        address = `https://github.com/felixwri/flags/images/${randomKey}.png?raw=true`;
+
+        randomKey = randomKey.replace("us-", "");
+        address = `https://github.com/felixwri/flags/blob/main/images/${randomKey}.png?raw=true`;
         // address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries.us.states[randomKey] };
     }
