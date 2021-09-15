@@ -32,7 +32,7 @@ const countries = {
     br: { country: "Brazil", difficulty: 3 },
     bs: { country: "Bahamas", difficulty: 8 },
     bt: { country: "Bhutan", difficulty: 5 },
-    bv: { country: "Bouvet Island", difficulty: 10 },
+    // bv: { country: "Bouvet Island", difficulty: 10 },
     bw: { country: "Botswana", difficulty: 6 },
     by: { country: "Belarus", difficulty: 7 },
     bz: { country: "Belize", difficulty: 8 },

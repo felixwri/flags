@@ -115,6 +115,7 @@ main {
 
 .btn {
     margin: 10px;
+    padding: 0.1em;
     border: 2px solid var(--text);
     color: var(--text);
 
@@ -395,5 +396,13 @@ main {
 
     .scale {
         transform: scale(80%) !important;
+    }
+
+    #difficulty {
+        width: 50%;
+    }
+
+    #settings-container svg {
+        display: none;
     }
 }
