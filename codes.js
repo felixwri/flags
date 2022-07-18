@@ -156,7 +156,7 @@ const countries = {
     mq: { country: "Martinique", difficulty: 7 },
     mr: { country: "Mauritania", difficulty: 8 },
     ms: { country: "Montserrat", difficulty: 9 },
-    mt: { country: "Malta", difficulty: 5 },
+    mt: { country: "Malta", difficulty: 7 },
     mu: { country: "Mauritius", difficulty: 9 },
     mv: { country: "Maldives", difficulty: 9 },
     mw: { country: "Malawi", difficulty: 6 },

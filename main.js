@@ -1,176 +1,23 @@
-// let countries;
 let keys;
 let americanKeys;
 let current;
-let difficulty = 10;
+let difficulty = "normal";
 let flagSet = "world";
 let timeline = { correct: false, active: false };
 let score = { current: 0, best: 0, deductions: 2 };
+let history = [];
 
-setInterval(() => {
-    let guess = document.getElementById("guess").value.toLowerCase();
-    let answer = current.country.toLowerCase();
-    // console.log(guessAccuracy(guess, answer))
-
-    if (current.aliases === undefined) {
-        if (guessAccuracy(guess, answer) > 0.8 && !timeline.active) {
+document.addEventListener("keypress", (e) => {
+    const inputElement = document.getElementById("guess");
+    if (e.key === "Enter") {
+        if (guessAccuracy(inputElement.value, current.country) > 0.8) {
             transition(true);
-        }
-    } else {
-        for (let i = 0; i < current.aliases.length; i++) {
-            answer = current.aliases[i].toLowerCase();
-            if (guessAccuracy(guess, answer) > 0.8 && !timeline.active) {
-                transition(true);
-            }
-        }
-    }
-}, 600);
-
-document.getElementById("hint").onclick = (e) => {
-    if (document.getElementsByClassName("hint-letter").length) return;
-    if (document.getElementsByClassName("hint-option").length) return;
-
-    let node = document.createElement("div");
-
-    let hintText = current.country[0];
-
-    for (let i = 1; i < current.country.length; i++) {
-        if (current.country[i] === " ") {
-            hintText += " . ";
         } else {
-            hintText += " _ ";
+            transition(false);
         }
     }
-    node.innerText = hintText;
-
-    let element = document.getElementsByClassName("multi-choice-container")[0].appendChild(node);
-    element.classList.add("hint-letter");
-
-    score.deductions += 1;
-};
-
-document.getElementById("multi").onclick = (e) => {
-    if (document.getElementsByClassName("hint-letter").length) return;
-    if (document.getElementsByClassName("hint-option").length) return;
-
-    let debug = 0;
-
-    let hints = [];
-
-    if (flagSet === "world") {
-        for (let i = 0; i < 3; i++) {
-            let key = randomCountry();
-            hints.push({ code: key, country: countries[key].country });
-        }
-    } else if (flagSet === "american") {
-        for (let i = 0; i < 3; i++) {
-            let key = americanKeys[Math.round(Math.random() * americanKeys.length)];
-            hints.push({ code: key, country: countries.us.states[key] });
-        }
-    }
-    hints.push(current);
-
-    let offset = Math.round(Math.random() * (hints.length - 1));
-
-    for (let i = offset; i < hints.length; i++) {
-        debug++;
-        if (debug > 10) {
-            return;
-        }
-
-        let elementId = i;
-
-        let node = document.createElement("DIV");
-        let element = document.getElementsByClassName("multi-choice-container")[0].appendChild(node);
-        element.textContent = hints[i].country;
-
-        element.className += "hint-option";
-
-        if (hints[i].country.length > 10) {
-            element.className += " hint-shrink";
-        }
-
-        element.onclick = (e) => {
-            let correct = false;
-
-            let guess = hints[elementId].country;
-            let answer = current.country;
-
-            console.log(guess, answer);
-
-            if (guessAccuracy(guess, answer) > 0.75) correct = true;
-
-            transition(correct);
-        };
-
-        if (offset === 0 && i == hints.length - 1) {
-            break;
-        } else if (i + 1 === offset) {
-            break;
-        } else if (i === hints.length - 1) {
-            i = -1;
-        }
-    }
-    score.deductions += 3;
-};
-
-// document.getElementById("guess").addEventListener("keypress", function (e) {
-//     if (e.key === "Enter") {
-//         let correct = false;
-
-//         let guess = document.getElementById("guess").value.toLowerCase();
-//         let answer = current.country.toLowerCase();
-
-//         if (current.aliases === undefined) {
-//             if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
-//                 correct = true;
-//             } else {
-//                 score.deductions += 1;
-//             }
-//         } else {
-//             for (let i = 0; i < current.aliases.length; i++) {
-//                 answer = current.aliases[i].toLowerCase();
-//                 if (guessAccuracy(guess, answer) > 0.75 && !timeline.active) {
-//                     correct = true;
-//                 } else {
-//                     score.deductions += 1;
-//                 }
-//             }
-//         }
-
-//         transition(correct);
-//     }
-// });
-
-document.getElementById("difficulty").onchange = (e) => {
-    console.log("difficulty changed");
-    difficulty = document.getElementById("difficulty").value;
-};
-
-document.getElementById("use-world").onclick = (e) => {
-    flagSet = "world";
-    document.getElementById("use-world").style.color = "rgb(138, 218, 255)";
-    document.getElementById("use-american").style.color = "rgb(255, 255, 255)";
-    skip();
-};
-
-document.getElementById("use-american").onclick = (e) => {
-    flagSet = "american";
-    document.getElementById("use-world").style.color = "rgb(255, 255, 255)";
-    document.getElementById("use-american").style.color = "rgb(138, 218, 255)";
-    skip();
-};
-
-// document.getElementById("next").onclick = async (e) => {
-//     let correct = false;
-
-//     let guess = document.getElementById("guess").value.toLowerCase();
-//     let answer = current.country.toLowerCase();
-
-//     if (guessAccuracy(guess, answer) > 0.75) correct = true;
-
-//     transition(correct);
-// };
+    return;
+});
 
 const transition = async (correct) => {
     timeline.active = true;
@@ -210,13 +57,48 @@ const skip = async () => {
 };
 
 const guessAccuracy = (guess, answer) => {
+    guess = guess.toLowerCase();
+    let guessArray = [];
+    let count = 0;
+    let substring = "";
+
+    for (let letterIndex = 0; letterIndex < guess.length; letterIndex++) {
+        if (count < 2) {
+            substring += `${guess[letterIndex]}`;
+            count++;
+        } else {
+            guessArray.push(substring);
+            substring = "";
+            count = 0;
+            letterIndex -= 2;
+        }
+    }
+
+    answer = answer.toLowerCase();
+
+    answerArray = [];
+    count = 0;
+    substring = "";
+
+    for (let letterIndex = 0; letterIndex < answer.length; letterIndex++) {
+        if (count < 2) {
+            substring += `${answer[letterIndex]}`;
+            count++;
+        } else {
+            answerArray.push(substring);
+            substring = "";
+            count = 0;
+            letterIndex -= 2;
+        }
+    }
+
     let total = 0;
-    for (let i = 0; i < answer.length; i++) {
-        if (guess[i] === answer[i]) {
+    for (let i = 0; i < answerArray.length; i++) {
+        if (guessArray[i] === answerArray[i]) {
             total++;
         }
     }
-    return total / answer.length;
+    return total / answerArray.length;
 };
 
 const newFlag = async () => {
@@ -237,45 +119,53 @@ const newFlag = async () => {
         randomKey = randomCountry();
         address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries[randomKey].country, aliases: countries[randomKey].aliases };
-
-        document.getElementById("image").src = address;
-        col = await get_average_rgb(address);
-        document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
-        document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
     } else if (flagSet === "american") {
         randomKey = americanKeys[Math.round(Math.random() * americanKeys.length)];
-
         const formattedRandomKey = randomKey.replace("us-", "");
         address = `https://raw.githubusercontent.com/felixwri/flags/main/images/${formattedRandomKey}.png`;
-        // address = `https://github.com/felixwri/flags/blob/main/images/${randomKey}.png?raw=true`;
-        // address = `https://flagcdn.com/h240/${randomKey}.png`;
         current = { code: randomKey, country: countries.us.states[randomKey] };
-
-        document.getElementById("image").src = address;
-        col = await get_average_rgb(address);
-        document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
-        // await sleep(500);
-        document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
     }
 
-    // document.getElementById("score").innerText = parseInt(document.getElementById("score").innerText) + 2 - score.deductions;
+    document.getElementById("image").src = address;
+    col = await get_average_rgb(address);
+    document.getElementsByTagName("body")[0].style.background = `linear-gradient(rgb(${col[0]}, ${col[1]}, ${col[2]} ), var(--main-bg), var(--main-bg))`;
+
+    if (contrastFunction(col[0], col[1], col[2])) {
+        document.querySelector("#settings-icon").style.fill = "black";
+    } else {
+        document.querySelector("#settings-icon").style.fill = "white";
+    }
+    document.getElementsByClassName("colored-panel")[0].style.backgroundColor = `rgba(44, 44, 44, 0)`;
 
     timeline.active = false;
-    score.deductions = 0;
 };
 
 const randomCountry = () => {
     let res;
+    let limiter;
 
     let index = Math.round(Math.random() * keys.length);
 
     res = keys[index];
 
-    if (countries[res].difficulty > difficulty) {
-        res = randomCountry();
-        console.log("skipped");
+    if (difficulty === "easy") {
+        limiter = 5;
+    } else {
+        limiter = 10;
     }
 
+    if (countries[res].difficulty > limiter) {
+        res = randomCountry();
+        console.log("Too hard: skipped");
+    }
+
+    if (history.indexOf(res) !== -1) {
+        res = randomCountry();
+        console.log("In history: skipped");
+    }
+
+    history.push(res);
+    if (history.length > 25) history.pop();
     return res;
 };
 
@@ -295,18 +185,16 @@ async function get_average_rgb(src) {
     });
 }
 
-// (async () => {
-//     const response = await fetch("https://flagcdn.com/en/codes.json")
-//     countries = await response.json()
-//     keys = Object.keys(countries)
-
-//     newFlag()
-// })();
-
 (() => {
     keys = Object.keys(countries);
     americanKeys = Object.keys(countries.us.states);
     newFlag();
 })();
+
+const contrastFunction = (r, g, b) => {
+    let x = r * 299 + g * 587 + b * 114;
+    x = x / 1000;
+    return x >= 128;
+};
 
 const sleep = (t) => new Promise((s) => setTimeout(s, t));
