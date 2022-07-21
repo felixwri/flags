@@ -40,18 +40,28 @@ const resolveParentID = (target, startingElement) => {
     }
 };
 
+const switchSet = async () => {
+    current.active = null;
+    current.next = null;
+
+    document.getElementById("image-container").removeChild(document.getElementsByClassName("flag")[1]);
+
+    newFlag();
+    transition(true);
+};
+
 document.getElementById("use-world").onclick = (e) => {
     flagSet = "world";
     document.getElementById("use-world").dataset.activeFlag = true;
     document.getElementById("use-american").dataset.activeFlag = false;
-    skip();
+    switchSet();
 };
 
 document.getElementById("use-american").onclick = (e) => {
     flagSet = "american";
     document.getElementById("use-world").dataset.activeFlag = false;
     document.getElementById("use-american").dataset.activeFlag = true;
-    skip();
+    switchSet();
 };
 
 const settingsSync = () => {
