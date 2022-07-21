@@ -106,6 +106,15 @@ async function destroyOption(element) {
 }
 
 async function reScale(target) {
+    const res = reSizeImage(target);
+    if (!res) {
+        await sleep(500);
+        reSizeImage(target);
+    }
+    return;
+}
+
+function reSizeImage(target) {
     let totalWidth = window.innerWidth;
 
     let imageContainer = document.getElementById("image-container");
@@ -115,12 +124,7 @@ async function reScale(target) {
     let imageAspect = imageWidth / imageHeight;
 
     if (imageAspect > 4) {
-        await sleep(500);
-        imageContainer = document.getElementById("image-container");
-        image = document.getElementsByClassName("flag")[target];
-        imageWidth = image.offsetWidth;
-        imageHeight = image.offsetHeight;
-        imageAspect = imageWidth / imageHeight;
+        return false;
     }
 
     let difference = elementIntersection(
@@ -131,13 +135,12 @@ async function reScale(target) {
     let calculation = imageContainer.offsetWidth - difference * imageAspect;
     if (calculation > totalWidth - 50) {
         calculation = totalWidth - 50;
-        console.log("too big");
     }
 
     if (imageAspect < 4) {
         imageContainer.style.width = `${calculation}px`;
     }
-    return;
+    return true;
 }
 
 async function setBackgroundGradient(source) {
@@ -186,51 +189,40 @@ const guessAccuracy = (guess, answer) => {
             letterIndex -= 2;
         }
     }
+    guessArray.push(substring);
 
     answer = answer.toLowerCase();
 
-    answerArray = [];
-    count = 0;
-    substring = "";
-
-    for (let letterIndex = 0; letterIndex < answer.length; letterIndex++) {
-        if (count < 2) {
-            substring += `${answer[letterIndex]}`;
-            count++;
-        } else {
-            answerArray.push(substring);
-            substring = "";
-            count = 0;
-            letterIndex -= 2;
-        }
-    }
-
     let total = 0;
-    for (let i = 0; i < answerArray.length; i++) {
-        if (guessArray[i] === answerArray[i]) {
+    let missed = answer;
+    for (let i = 0; i < guessArray.length; i++) {
+        if (answer.includes(guessArray[i])) {
             total++;
+
+            if (i === guessArray.length - 1 && missed.length === 1) {
+                missed = "";
+            } else {
+                missed = missed.replace(guessArray[i], "");
+            }
         }
     }
-    return total / answerArray.length;
+
+    return (total - missed.length) / guessArray.length;
 };
 
 const randomCountry = (skipHistory) => {
     let res;
-    let limiter;
 
     let index = Math.round(Math.random() * (keys.length - 1));
 
     res = keys[index];
 
-    if (difficulty === "easy") {
-        limiter = 5;
-    } else {
-        limiter = 10;
-    }
-
-    if (countries[res].difficulty > limiter) {
+    if (difficulty === "easy" && countries[res].difficulty > 5) {
         res = randomCountry();
-        console.log("Too hard: skipped");
+        console.log("Too Hard: skipped");
+    } else if (difficulty === "hard" && countries[res].difficulty < 6) {
+        res = randomCountry();
+        console.log("Too Easy: skipped");
     }
 
     if (skipHistory) return res;
@@ -286,6 +278,22 @@ const contrastFunction = (r, g, b) => {
 };
 
 const sleep = (t) => new Promise((s) => setTimeout(s, t));
+
+const debounce = (func) => {
+    let time = 100;
+    let timer;
+    return (event) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(func, time, event);
+    };
+};
+
+window.addEventListener(
+    "resize",
+    debounce(() => {
+        reSizeImage(0);
+    })
+);
 
 (() => {
     keys = Object.keys(countries);

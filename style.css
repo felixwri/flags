@@ -558,3 +558,47 @@ main {
     }
 
 }
+
+@media (max-height: 650px) {
+    .container-row {
+        height: 0rem;
+    }
+
+    .container-column {
+        height: 70vh;
+        margin-top: 2rem;
+    }
+}
+
+@media (max-height: 500px) {
+    .hint-container {
+        pointer-events: none;
+
+        font-size: 0.9rem;
+    }
+
+    .container-row {
+        height: 0rem;
+    }
+
+    .container-column {
+        height: 85vh;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-height: 400px) {
+
+    .container-column {
+        height: 100vh;
+        margin-top: 1rem;
+    }
+
+    #hint {
+        display: none;
+    }
+
+    .toggle {
+        display: none;
+    }
+}

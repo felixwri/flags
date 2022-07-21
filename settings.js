@@ -47,7 +47,7 @@ const switchSet = async () => {
     document.getElementById("image-container").removeChild(document.getElementsByClassName("flag")[1]);
 
     newFlag();
-    transition(true);
+    transition(false);
 };
 
 document.getElementById("use-world").onclick = (e) => {

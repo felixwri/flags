@@ -73,15 +73,13 @@ function createMultiOption() {
     } else if (flagSet === "american") {
         for (let i = 0; i < 5; i++) {
             let key = americanKeys[Math.round(Math.random() * (americanKeys.length - 1))];
-            console.log(countries.us.states[key]);
+
             hints.push({ code: key, country: countries.us.states[key] });
         }
     }
     hints.push(current.active);
 
     let offset = Math.round(Math.random() * (hints.length - 1));
-
-    console.log(hints);
 
     for (let i = offset; i < hints.length; i++) {
         debug++;
@@ -92,7 +90,7 @@ function createMultiOption() {
         let elementId = i;
 
         let element = document.createElement("DIV");
-        // let element = document.getElementsByClassName("multi-choice-container")[0].appendChild(node);
+
         element.textContent = hints[i].country;
 
         element.className += "hint-option";
@@ -119,14 +117,13 @@ function createMultiOption() {
         } else if (i + 1 === offset) {
             break;
         } else if (i === hints.length - 1) {
-            console.log("res");
             i = -1;
         }
     }
     return elementArray;
 }
 
-document.getElementById("write").onclick = (e) => {
+document.getElementById("write").onclick = async (e) => {
     if (current.mode !== "text") current.mode = "text";
 
     if (e.target.dataset.mode === "false") {
@@ -153,4 +150,6 @@ document.getElementById("write").onclick = (e) => {
     }
 
     multiTransitionDestroy();
+    await sleep(200);
+    reSizeImage(0);
 };
