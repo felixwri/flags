@@ -28,7 +28,10 @@ async function revealCountry() {
     hintContainers[0].innerHTML = ``;
 }
 
-document.getElementById("multi").onclick = (e) => {
+document.getElementById("multi").onclick = async (e) => {
+    if (timeline.transition === true) return;
+    timeline.transition = true;
+
     if (current.mode !== "multi") current.mode = "multi";
 
     if (e.target.dataset.mode === "false") {
@@ -40,12 +43,19 @@ document.getElementById("multi").onclick = (e) => {
         hint.classList.add("hide");
         hint.style.height = "0px";
 
+        let description = document.getElementById("description");
+        description.classList.add("hide");
+        description.style.height = "0px";
+
         let skip = document.getElementById("skip");
         skip.classList.add("hide");
         skip.style.height = "0px";
 
         let hintContainer = document.getElementsByClassName("hint-container")[0];
         hintContainer.dataset.choice = "false";
+
+        let descriptionContainer = document.getElementsByClassName("description-container")[0];
+        descriptionContainer.dataset.choice = "false";
 
         let multiContainer = document.getElementsByClassName("multi-choice-container")[0];
         multiContainer.dataset.choice = "true";
@@ -56,6 +66,11 @@ document.getElementById("multi").onclick = (e) => {
 
     hintTransitionDestroy();
     multiTransitionCreate();
+
+    await sleep(200);
+    reSizeImage(0);
+    await sleep(200);
+    timeline.transition = false;
 };
 
 function createMultiOption() {
@@ -123,7 +138,56 @@ function createMultiOption() {
     return elementArray;
 }
 
+document.getElementById("description").addEventListener("click", async (e) => {
+    const URL = `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&titles=${current.active.country}&redirects=true&origin=*`;
+    let result = await fetch(URL, {
+        method: "GET",
+    });
+
+    result = await result.json();
+
+    let pages = result.query.pages;
+    let pageID = Object.keys(pages);
+    let extract = pages[pageID].extract;
+
+    let text = stripHTML(extract);
+
+    text = text.substring(0, 1024);
+
+    text = stringToSentence(text);
+
+    text = text.replaceAll(current.active.country, "[country]");
+    text = text.split("\r");
+
+    const container = document.getElementsByClassName("description-container")[0];
+    // container.innerText = text[1];
+    let description = text[1];
+    let incomplete = "";
+    for (let i = 0; i < description.length; i++) {
+        incomplete += description[i];
+        container.innerText = incomplete;
+        await sleep(10);
+    }
+    container.dataset.choice = "true";
+});
+
+function stringToSentence(string) {
+    let re = /\b(\w\.\w\.)|([.?!])\s+(?=[A-Za-z])/g;
+    let result = string.replace(re, function (m, g1, g2) {
+        return g1 ? g1 : g2 + "\r";
+    });
+    return result;
+}
+
+function stripHTML(html) {
+    let doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || "";
+}
+
 document.getElementById("write").onclick = async (e) => {
+    if (timeline.transition === true) return;
+    timeline.transition = true;
+
     if (current.mode !== "text") current.mode = "text";
 
     if (e.target.dataset.mode === "false") {
@@ -135,12 +199,19 @@ document.getElementById("write").onclick = async (e) => {
         hint.classList.remove("hide");
         hint.style.height = "50px";
 
+        let description = document.getElementById("description");
+        description.classList.remove("hide");
+        description.style.height = "50px";
+
         let skip = document.getElementById("skip");
         skip.classList.remove("hide");
         skip.style.height = "50px";
 
         let hintContainer = document.getElementsByClassName("hint-container")[0];
         hintContainer.dataset.choice = "true";
+
+        let descriptionContainer = document.getElementsByClassName("description-container")[0];
+        descriptionContainer.dataset.choice = "true";
 
         let multiContainer = document.getElementsByClassName("multi-choice-container")[0];
         multiContainer.dataset.choice = "false";
@@ -152,4 +223,6 @@ document.getElementById("write").onclick = async (e) => {
     multiTransitionDestroy();
     await sleep(200);
     reSizeImage(0);
+    await sleep(200);
+    timeline.transition = false;
 };

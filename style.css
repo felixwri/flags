@@ -60,7 +60,7 @@ body {
 
 main {
     margin-top: 4rem;
-    height: 60vh;
+    height: 55vh;
 }
 
 .container-column {
@@ -75,18 +75,19 @@ main {
     align-items: center;
     justify-content: space-evenly;
 
-    width: 100vw;
+    /* width: 100vw; */
+    width: 600px;
 }
 
 .btn {
     margin: 10px;
     padding: 0.1em;
-    border: 2px solid var(--text);
+    border: 1px solid rgba(0, 0, 0, 0.3);
     color: var(--text);
 
-    background: none;
-
     box-shadow: 2px 2px 5px rgb(0, 0, 0);
+
+    background: rgba(0, 0, 0, 0.5);
 
     width: 120px;
     height: 50px;
@@ -95,7 +96,22 @@ main {
 
     cursor: pointer;
 
-    transition: background-color 0.3s ease;
+    font-family: "Roboto", sans-serif;
+
+
+    font-size: 1em;
+    overflow: hidden;
+
+    transition: box-shadow 0.3s ease, background-color 0.3s ease, opacity 0.3s ease, height 0.3s ease;
+}
+
+.btn:hover {
+    background-color: rgb(20, 20, 20);
+    box-shadow: 4px 4px 8px rgb(0, 0, 0);
+}
+
+#description {
+    width: 180px;
 }
 
 #guess {
@@ -110,9 +126,10 @@ main {
     margin-top: 1em;
     margin-bottom: 1em;
 
-    background: none;
+    background: rgba(0, 0, 0, 0.5);
 
-    border: 2px solid rgba(200, 200, 200);
+    /* border: 2px solid rgba(200, 200, 200); */
+    border: none;
 
     box-shadow: 2px 2px 5px rgb(0, 0, 0);
 
@@ -120,11 +137,12 @@ main {
 
     font-size: 1em;
 
-    transition: box-shadow 0.2s ease, opacity 0.3s ease, height 0.3s ease;
+    transition: box-shadow 0.2s ease, background-color 0.3s ease, opacity 0.3s ease, height 0.3s ease;
 }
 
 #guess:hover {
-    box-shadow: 4px 4px 5px black;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 5px 5px 10px black;
 }
 
 .svg {
@@ -174,22 +192,11 @@ main {
     transition: transform 0.1s ease;
 }
 
-#skip {
-    font-family: "Roboto", sans-serif;
-
-    border-style: dashed;
-
-    background: none;
-
-    font-size: 1em;
-    overflow: hidden;
-
-    transition: opacity 0.3s ease, height 0.3s ease;
+br {
+    display: none;
 }
 
-#skip:hover {
-    background-color: rgb(20, 20, 20);
-}
+
 
 .toggle {
     position: absolute;
@@ -232,19 +239,6 @@ main {
 }
 
 
-#hint {
-    font-family: "Roboto", sans-serif;
-    background: none;
-    font-size: 1em;
-
-    overflow: hidden;
-    transition: opacity 0.3s ease, height 0.3s ease;
-}
-
-#hint:hover {
-    background-color: rgb(20, 20, 20);
-}
-
 .multi-choice-container {
     height: 10rem;
     width: 50vw;
@@ -265,13 +259,35 @@ main {
 }
 
 .hint-container {
-    height: 10rem;
-    width: 50vw;
+    height: 6rem;
+    width: 90vw;
 
     display: flex;
     justify-content: center;
 
     color: var(--text);
+
+    transition: height 0.5s ease;
+}
+
+.description-container {
+
+    position: absolute;
+    margin-left: 10vw;
+    height: 10rem;
+    width: 80vw;
+
+
+    font-size: 1.4rem;
+
+    display: flex;
+    justify-content: center;
+
+    border-radius: 5px;
+
+    color: var(--text);
+
+    overflow-y: auto;
 
     transition: height 0.5s ease;
 }
@@ -323,7 +339,7 @@ main {
 }
 
 .hint-option:hover {
-    background-color: rgb(20, 20, 20);
+    background-color: rgb(15, 15, 15);
     box-shadow: 2px 2px 5px rgb(0, 0, 0);
 }
 
@@ -341,7 +357,7 @@ main {
 
     box-shadow: 2px 2px 5px rgb(0, 0, 0);
 
-    /* transition: all 0.5s ease-in-out; */
+    pointer-events: none;
     transition: left 0.5s ease, opacity 0.3s ease;
 }
 
@@ -356,6 +372,11 @@ main {
     height: 25rem;
 
     transition: width 0.5s ease;
+}
+
+.relative-wrapper {
+    position: relative;
+    width: 100%;
 }
 
 #settings {
@@ -490,9 +511,17 @@ main {
         width: 40%;
     }
 
+    .container-row {
+        width: 100%;
+    }
+
 }
 
 @media (max-width: 500px) {
+    .container-row {
+        width: 100%;
+    }
+
     #settings-container {
         font-size: 0.75em;
     }
@@ -511,16 +540,8 @@ main {
         width: 80vw;
     }
 
-    #hint {
-        font-size: 1em;
-    }
-
-    #next {
-        font-size: 0.6em;
-    }
-
-    #skip {
-        font-size: 1em;
+    .btn {
+        font-size: 0.8em;
     }
 
     .layout {
@@ -559,6 +580,12 @@ main {
 
 }
 
+@media (max-width: 400px) {
+    .btn {
+        font-size: 0.6em;
+    }
+}
+
 @media (max-height: 650px) {
     .container-row {
         height: 0rem;
@@ -585,6 +612,7 @@ main {
         height: 85vh;
         margin-top: 1rem;
     }
+
 }
 
 @media (max-height: 400px) {
@@ -598,7 +626,28 @@ main {
         display: none;
     }
 
+    #description {
+        display: none;
+    }
+
     .toggle {
         display: none;
     }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 2px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(30, 30, 30);
+    border-radius: 2px;
 }

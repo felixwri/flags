@@ -1,6 +1,6 @@
 const countries = {
     ad: { country: "Andorra", difficulty: 7 },
-    ae: { country: "United Arab Emirates", difficulty: 6 },
+    ae: { country: "United Arab Emirates", difficulty: 6, aliases: ["UAE"] },
     af: { country: "Afghanistan", difficulty: 5 },
     ag: { country: "Antigua and Barbuda", difficulty: 9, aliases: ["Antigua", "Barbuda"] },
     ai: { country: "Anguilla", difficulty: 10 },
@@ -152,7 +152,7 @@ const countries = {
     mm: { country: "Myanmar", difficulty: 6 },
     mn: { country: "Mongolia", difficulty: 8 },
     mo: { country: "Macau", difficulty: 8 },
-    mp: { country: "Northern Mariana Islands", difficulty: 8 },
+    mp: { country: "Northern Mariana Islands", difficulty: 8, aliases: ["Mariana Islands"] },
     mq: { country: "Martinique", difficulty: 7 },
     mr: { country: "Mauritania", difficulty: 8 },
     ms: { country: "Montserrat", difficulty: 9 },
@@ -223,13 +223,13 @@ const countries = {
     st: {
         country: "São Tomé and Príncipe",
         difficulty: 10,
-        aliases: ["São Tomé", "Príncipe"],
+        aliases: ["São Tomé", "Príncipe", "Sao Tome", "Principe", "Sao Tome and Principe"],
     },
     sv: { country: "El Salvador", difficulty: 8 },
     sx: { country: "Sint Maarten", difficulty: 10 },
     sy: { country: "Syria", difficulty: 7 },
-    sz: { country: "Eswatini (Swaziland)", difficulty: 7 },
-    tc: { country: "Turks and Caicos Islands", difficulty: 10 },
+    sz: { country: "Eswatini (Swaziland)", difficulty: 7, aliases: ["Eswatini", "Swaziland"] },
+    tc: { country: "Turks and Caicos Islands", difficulty: 10, aliases: ["Caicos Islands"] },
     td: { country: "Chad", difficulty: 7 },
     tf: {
         country: "French Southern and Antarctic Lands",
@@ -251,10 +251,15 @@ const countries = {
     tz: { country: "Tanzania", difficulty: 8 },
     ua: { country: "Ukraine", difficulty: 5 },
     ug: { country: "Uganda", difficulty: 6 },
-    // um: { country: "United States Minor Outlying Islands", difficulty: 10, aliases: ["United States"] },
+    um: {
+        country: "United States Minor Outlying Islands",
+        difficulty: 10,
+        aliases: ["United States", "USA", "United States of America"],
+    },
     // un: { country: "United Nations", difficulty: 2 },
     us: {
         country: "United States",
+        aliases: ["USA", "United States of America"],
         difficulty: 1,
         states: {
             "us-ak": "Alaska",
@@ -312,11 +317,19 @@ const countries = {
 
     uy: { country: "Uruguay", difficulty: 6 },
     uz: { country: "Uzbekistan", difficulty: 7 },
-    va: { country: "Vatican City (Holy See)", difficulty: 4, aliases: ["Vatican City", "Holy See"] },
-    vc: { country: "Saint Vincent and the Grenadines", difficulty: 10, aliases: ["Saint Vincent", "the Grenadines"] },
+    va: {
+        country: "Vatican City (Holy See)",
+        difficulty: 4,
+        aliases: ["Vatican City", "Holy See", "Vatican", "The Vatican"],
+    },
+    vc: {
+        country: "Saint Vincent and the Grenadines",
+        difficulty: 10,
+        aliases: ["Saint Vincent", "The Grenadines", "Grenadines"],
+    },
     ve: { country: "Venezuela", difficulty: 5 },
     vg: { country: "British Virgin Islands", difficulty: 9 },
-    vi: { country: "United States Virgin Islands", difficulty: 7 },
+    vi: { country: "United States Virgin Islands", difficulty: 7, aliases: ["US Virgin Islands"] },
     vn: { country: "Vietnam", difficulty: 6 },
     vu: { country: "Vanuatu", difficulty: 9 },
     wf: { country: "Wallis and Futuna", difficulty: 10 },

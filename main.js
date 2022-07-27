@@ -7,13 +7,22 @@ let current = {
 };
 let difficulty = "normal";
 let flagSet = "world";
-let timeline = { correct: false, active: false };
+let timeline = { active: false, transition: false };
 let score = { current: 0, best: 0, deductions: 2 };
 let history = [];
 
 document.addEventListener("keypress", (e) => {
     const inputElement = document.getElementById("guess");
     if (e.key === "Enter") {
+        if (current.active.aliases !== undefined) {
+            for (let i = 0; i < current.active.aliases.length; i++) {
+                if (guessAccuracy(inputElement.value, current.active.aliases[i]) > 0.8) {
+                    transition(true);
+                    return;
+                }
+            }
+        }
+
         if (guessAccuracy(inputElement.value, current.active.country) > 0.8) {
             transition(true);
         } else {
@@ -66,7 +75,7 @@ async function multiTransitionCreate() {
     let container = document.getElementsByClassName("multi-choice-container")[0];
 
     if (container.childElementCount > 0) {
-        await sleep(500);
+        await sleep(200);
     }
 
     let elements = await createMultiOption();
@@ -88,8 +97,14 @@ function hintTransitionDestroy() {
     if (hint.length) hint[0].remove();
 }
 
+function descriptionTransitionDestroy() {
+    let desc = document.getElementsByClassName("description-container");
+    desc[0].innerText = "";
+}
+
 async function multiTransitionDestroy() {
     hintTransitionDestroy();
+    descriptionTransitionDestroy();
     let multi = document.getElementsByClassName("hint-option");
     if (multi.length > 0) {
         for (let j = multi.length - 1; j >= 0; j--) {
@@ -172,43 +187,38 @@ const skip = async () => {
     transition(false);
 };
 
-const guessAccuracy = (guess, answer) => {
-    guess = guess.toLowerCase();
-    let guessArray = [];
-    let count = 0;
-    let substring = "";
+// Levenshtein distance
 
-    for (let letterIndex = 0; letterIndex < guess.length; letterIndex++) {
-        if (count < 2) {
-            substring += `${guess[letterIndex]}`;
-            count++;
-        } else {
-            guessArray.push(substring);
-            substring = "";
-            count = 0;
-            letterIndex -= 2;
-        }
+function guessAccuracy(s1, s2) {
+    if (s1.length === 0 || s2.length === 0) return;
+    if (s2.length > s1.length) {
+        [s1, s2] = [s2, s1];
     }
-    guessArray.push(substring);
 
-    answer = answer.toLowerCase();
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
 
-    let total = 0;
-    let missed = answer;
-    for (let i = 0; i < guessArray.length; i++) {
-        if (answer.includes(guessArray[i])) {
-            total++;
-
-            if (i === guessArray.length - 1 && missed.length === 1) {
-                missed = "";
-            } else {
-                missed = missed.replace(guessArray[i], "");
+    let costs = [];
+    for (let i = 0; i <= s1.length; i++) {
+        let lastValue = i;
+        for (let j = 0; j <= s2.length; j++) {
+            if (i == 0) costs[j] = j;
+            else {
+                if (j > 0) {
+                    let newValue = costs[j - 1];
+                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                    costs[j - 1] = lastValue;
+                    lastValue = newValue;
+                }
             }
         }
+        if (i > 0) costs[s2.length] = lastValue;
     }
 
-    return (total - missed.length) / guessArray.length;
-};
+    console.log((s1.length - costs[s2.length]) / s1.length);
+    return (s1.length - costs[s2.length]) / s1.length;
+}
 
 const randomCountry = (skipHistory) => {
     let res;
